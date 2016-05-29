@@ -149,7 +149,6 @@ slackBot.add('/animations/hide', [
     }
 ]);
 
-
 var colors = {
   "Galben viu": "/colors/vividYellow",
   "Galbenish-Portocaliu": "/colors/yellowOrange",
@@ -164,6 +163,20 @@ slackBot.add('/colors', [
     },
     function (session, results) {
       session.replaceDialog(colors[results.response.entity]);
+    },
+    function (session, results) {
+      var color = session.dialogData.color;
+
+      serialComunication.setColor(session.dialogData.color, function(err) {
+        if(err) {
+          session.send("Nu putem schimba culoarea...");
+          session.send(err);
+        } else {
+          session.send('Schimbam culoarea! \n rosu: ' + color.red + ' verde: ' + color.green + ' albastru: ' + color.blue);
+        }
+      });
+
+      session.endDialog();
     }
 ]);
 
@@ -187,13 +200,6 @@ slackBot.add('/colors/other', [
     function (session, results) {
       if(checkColor(session, results.response)) {
         session.dialogData.color.blue = results.response;
-
-        var color = session.dialogData.color;
-
-        session.send('Se va face!');
-        session.send('rosu: ' + color.red + ' verde: ' + color.green + ' albastru: ' + color.blue);
-
-        session.endDialog();
       }
     }
 ]);
