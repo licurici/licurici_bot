@@ -2,11 +2,14 @@ var Botkit = require('botkit');
 var builder = require('botbuilder');
 
 var checkColor = require("./src/color");
+var serialComunication = require('./src/serial.js');
 
 var controller = Botkit.slackbot();
 var bot = controller.spawn({
    token: "xoxb-32029623829-7Bp4OOjUlO6GF6RBi4XZnpvF"
 });
+
+serialComunication.init('/dev/cu.usbmodem1411');
 
 var slackBot = new builder.SlackBot(controller, bot);
 slackBot.add('/', function (session) {
@@ -41,7 +44,7 @@ slackBot.add('/licurici', [
 
 var animations = {
   "Sa ne aratam": "/animations/show",
-  "Sa ne bucuram": "/animations/joy",
+  "Sa ne bucuram (nu e implementat)": "/animations/joy",
   "Sclipim": "/animations/flicker",
   "Sarim": "/animations/road",
   "Sa ne ascundem": "/animations/hide"
@@ -52,7 +55,97 @@ slackBot.add('/animations', [
         builder.Prompts.choice(session, "Oare ce vrei sa facem?", animations);
     },
     function (session, results) {
-        session.endDialog();
+      console.log("==>", animations[results.response.entity]);
+      session.replaceDialog(animations[results.response.entity]);
+    }
+]);
+
+slackBot.add('/animations/show', [
+    function (session) {
+      session.dialogData.action = {};
+      session.dialogData.action.nr = 0;
+
+      builder.Prompts.number(session, "Oare care grup se apara?");
+    },
+    function (session, results) {
+      session.dialogData.action.group = results.response;
+      serialComunication.do(session.dialogData.action, function(err) {
+        if(err) {
+          session.send("Nu putem aparea...");
+          session.send(err);
+        } else {
+          session.send("Ne aratam!");
+        }
+      });
+      session.endDialog();
+    }
+]);
+
+slackBot.add('/animations/flicker', [
+    function (session) {
+      session.dialogData.action = {};
+      session.dialogData.action.nr = 1;
+
+      builder.Prompts.number(session, "Oare care grup sa sclipeasca?");
+    },
+    function (session, results) {
+      session.dialogData.action.group = results.response;
+      serialComunication.do(session.dialogData.action, function(err) {
+        if(err) {
+          session.send("Nu putem sclipi...");
+          session.send(err);
+        } else {
+          session.send("Sclipim!");
+        }
+      });
+      session.endDialog();
+    }
+]);
+
+
+slackBot.add('/animations/road', [
+    function (session) {
+      session.dialogData.action = {};
+      session.dialogData.action.nr = 2;
+
+      builder.Prompts.number(session, "Oare care grup sa sara?");
+    },
+    function (session, results) {
+      session.dialogData.action.group = results.response;
+      serialComunication.do(session.dialogData.action, function(err) {
+        if(err) {
+          session.send("Nu putem sari...");
+          session.send(err);
+        } else {
+          session.send("Sarim!");
+        }
+      });
+      session.endDialog();
+    }
+]);
+
+slackBot.add('/animations/hide', [
+    function (session) {
+      session.dialogData.action = {};
+      session.dialogData.action.nr = 3;
+
+      builder.Prompts.number(session, "Oare care grup se ascunde?");
+    },
+    function (session, results) {
+      session.dialogData.action.group = results.response;
+      builder.Prompts.number(session, "Care e procentul de licurici care se sting?");
+    },
+    function (session, results) {
+      session.dialogData.action.percent = results.response;
+      serialComunication.do(session.dialogData.action, function(err) {
+        if(err) {
+          session.send("Nu ne putem ascunde...");
+          session.send(err);
+        } else {
+          session.send("Ne-am ascuns!");
+        }
+      });
+      session.endDialog();
     }
 ]);
 
@@ -67,7 +160,7 @@ var colors = {
 
 slackBot.add('/colors', [
     function (session) {
-        builder.Prompts.choice(session, "Oare ce culoare vrei?", colors);
+      builder.Prompts.choice(session, "Oare ce culoare vrei?", colors);
     },
     function (session, results) {
       session.replaceDialog(colors[results.response.entity]);
