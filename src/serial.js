@@ -10,6 +10,11 @@ module.exports.init = function(name) {
   port.on('open', function () {
     console.log("Connected to", name);
   });
+
+  port.on('data', function (data) {
+    data = data.toString().split("\n");
+    console.log('Data: ' + data);
+  });
 };
 
 

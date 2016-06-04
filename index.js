@@ -18,8 +18,7 @@ var slackBot = new builder.SlackBot(controller, bot, {
   minSendDelay: 100
 });
 
-
-slackBot.beginDialog({ from: alarm.from, to: alarm.to }, '/notify', alarm);
+//slackBot.beginDialog({ from: alarm.from, to: alarm.to }, '/notify', alarm);
 
 var mainDialog = new builder.CommandDialog()
   .onDefault(function (session) {
