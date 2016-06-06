@@ -7,7 +7,7 @@ function events(bot, channel) {
 
     events[key] = event;
 
-    this.timeout = setTimeout(() => {
+    this.timeout = setTimeout(function() {
       var message = "";
 
       for(key in events) {
