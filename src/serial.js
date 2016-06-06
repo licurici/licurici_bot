@@ -1,19 +1,42 @@
-var SerialPort = require('serialport').SerialPort;
+var serialport = require('serialport');
+var SerialPort = serialport.SerialPort;
 var port;
 
+var events = ["SoundDetected", "Hiding"];
 
+function isEvent(data) {
 
-module.exports.init = function(name) {
+  var result = false;
 
-  port = new SerialPort(name);
+  events.forEach(function(event) {
+    if(event === data) {
+      result = true;
+    }
+  });
+
+  return result;
+}
+
+module.exports.init = function(name, eventFunction) {
+
+  port = new SerialPort(name, {
+    parser: serialport.parsers.readline('\r\n')
+  });
 
   port.on('open', function () {
     console.log("Connected to", name);
   });
 
   port.on('data', function (data) {
-    data = data.toString().split("\n");
-    console.log('Data: ' + data);
+    data = data.toString().trim();
+    var event = data.split(" ")[0];
+
+    if(data !== "" && isEvent(event)) {
+      if(eventFunction) {
+        eventFunction(event, data);
+      }
+    }
+
   });
 };
 

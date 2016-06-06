@@ -4,21 +4,21 @@ var builder = require('botbuilder');
 var checkColor = require("./src/color");
 var animations = require("./src/animations");
 var serialComunication = require('./src/serial');
+var events = require('./src/events.js');
 
 var settings = require('./settings.js');
+
+
+var connectedToSlack = false;
 
 var controller = Botkit.slackbot();
 var bot = controller.spawn({
    token: settings.slackToken
 });
 
-serialComunication.init(settings.serialPort);
-
 var slackBot = new builder.SlackBot(controller, bot, {
   minSendDelay: 100
 });
-
-//slackBot.beginDialog({ from: alarm.from, to: alarm.to }, '/notify', alarm);
 
 var mainDialog = new builder.CommandDialog()
   .onDefault(function (session) {
@@ -33,6 +33,9 @@ bot.startRTM(function(err,bot,payload) {
   if (err) {
     throw new Error('Could not connect to Slack');
   }
+
+  console.log("Connected to slack.");
+  connectedToSlack = true;
 });
 
 var actions = {
@@ -40,6 +43,14 @@ var actions = {
     "Schimba culoarea": "/colors",
     "Rapoarte": "/reports"
 };
+
+slackBot.add('/notify', [
+    function (session, message) {
+      session.send(message);
+      session.endDialog();
+    }
+]);
+
 
 slackBot.add('/licurici', [
     function (session) {
@@ -113,3 +124,8 @@ slackBot.add('/colors/other', [
       }
     }
 ]);
+
+events.setBot(slackBot);
+events.setChannel(settings.slackChannel);
+
+serialComunication.init(settings.serialPort, events.send);
