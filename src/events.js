@@ -1,37 +1,24 @@
+function events(bot, channel) {
 
-var events = {};
-var lastTime = new Date();
-var timeout = null;
-var slackBot = null;
-var channel = "";
+  var events = {};
 
-module.exports.setBot = function(bot) {
-  slackBot = bot;
-};
+  this.send = function(key, event) {
+    clearTimeout(this.timeout);
 
-module.exports.setChannel = function(ch) {
-  channel = ch;
-};
+    events[key] = event;
 
+    this.timeout = setTimeout(() => {
+      var message = "";
 
-module.exports.send = function(key, event) {
-  clearTimeout(timeout);
+      for(key in events) {
+        message += "`" + events[key] + "` ";
+      }
 
-  events[key] = event;
+      if(message !== "") {
+        bot.beginDialog({channel: channel}, '/notify', message);
+      }
+    }, 1000);
+  };
+}
 
-  var diff = new Date() - lastTime;
-
-  timeout = setTimeout(function () {
-    var message = "";
-
-    for(key in events) {
-      message += "`" + events[key] + "` ";
-    }
-
-    if(message !== "") {
-      slackBot.beginDialog({channel: channel}, '/notify', message);
-    }
-
-    events = {};
-  }, 1000);
-};
+module.exports.default = events;

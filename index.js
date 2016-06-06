@@ -4,7 +4,7 @@ var builder = require('botbuilder');
 var checkColor = require("./src/color");
 var animations = require("./src/animations");
 var serialComunication = require('./src/serial');
-var events = require('./src/events.js');
+var Events = require('./src/events.js').default;
 
 var settings = require('./settings.js');
 
@@ -125,7 +125,7 @@ slackBot.add('/colors/other', [
     }
 ]);
 
-events.setBot(slackBot);
-events.setChannel(settings.slackChannel);
+
+var events = new Events(slackBot, settings.slackChannel);
 
 serialComunication.init(settings.serialPort, events.send);
