@@ -173,7 +173,6 @@ function bindShort(slackBot, mainDialog) {
 }
 
 module.exports.bind = function(slackBot, mainDialog) {
-
   bindQuiz(slackBot);
   bindShort(slackBot, mainDialog);
 };

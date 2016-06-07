@@ -1,6 +1,9 @@
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
 var port;
+var reportCallback = null;
+var gettingReport = false;
+var reportData = "";
 
 var events = ["SoundDetected", "Hiding"];
 
@@ -28,15 +31,33 @@ module.exports.init = function(name, eventFunction) {
   });
 
   port.on('data', function (data) {
-    data = data.toString().trim();
-    var event = data.split(" ")[0];
-
-    if(data !== "" && isEvent(event)) {
-      if(eventFunction) {
-        eventFunction(event, data);
-      }
+    if(data === "BEGIN REPORT") {
+      gettingReport = true;
+      return;
     }
 
+    if(data === "END REPORT") {
+      gettingReport = false;
+
+      if(reportCallback) {
+        reportCallback(reportData);
+      }
+
+      reportCallback = null;
+    }
+
+    if(gettingReport) {
+      reportData += data + "\n";
+    } else {
+      data = data.toString().trim();
+      var event = data.split(" ")[0];
+
+      if(data !== "" && isEvent(event)) {
+        if(eventFunction) {
+          eventFunction(event, data);
+        }
+      }
+    }
   });
 };
 
@@ -69,6 +90,12 @@ function roadAction(group, callback) {
   send(2, group, callback);
 }
 
+function getReport(callback) {
+  port.write('5\r\n', function(err, bytesWritten) {
+    reportCallback = callback;
+  });
+}
+
 function hideAction(group, percent, callback) {
   send(3, group, function(err) {
     if (err) {
@@ -85,6 +112,8 @@ function hideAction(group, percent, callback) {
   });
 }
 
+
+module.exports.getReport = getReport;
 
 module.exports.do = function(action, callback) {
 

@@ -3,6 +3,8 @@ var builder = require('botbuilder');
 
 var checkColor = require("./src/color");
 var animations = require("./src/animations");
+var reports = require("./src/reports");
+
 var serialComunication = require('./src/serial');
 var Events = require('./src/events.js').default;
 
@@ -64,6 +66,7 @@ slackBot.add('/licurici', [
 ]);
 
 animations.bind(slackBot, mainDialog);
+reports.bind(slackBot, mainDialog, serialComunication);
 
 var colors = {
   "Galben viu": { red: 10, green: 10, blue: 5},
