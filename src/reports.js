@@ -13,9 +13,14 @@ function bindReport(slackBot) {
 }
 
 function bindShort(slackBot, mainDialog) {
+  mainDialog.matches('rapoarte', function (session, result) {
+    session.replaceDialog('/reports');
+  });
 
+  mainDialog.matches('raport', function (session, result) {
+    session.replaceDialog('/reports');
+  });
 }
-
 
 module.exports.bind = function(slackBot, mainDialog, serial) {
   bindReport(slackBot);

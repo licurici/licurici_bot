@@ -33,6 +33,7 @@ module.exports.init = function(name, eventFunction) {
   port.on('data', function (data) {
     if(data === "BEGIN REPORT") {
       gettingReport = true;
+      reportData = "";
       return;
     }
 
