@@ -4,5 +4,10 @@
 module.exports = {
   slackToken: "",
   slackChannel: "",
-  serialPort: ""
+  serialPort: "",
+
+  instagramId: "",
+  instagramKey: "",
+  instagramToken: "",
+  hashTag: ""
 };

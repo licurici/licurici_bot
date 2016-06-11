@@ -15,7 +15,7 @@ function events(bot, channel) {
       }
 
       if(message !== "") {
-        bot.beginDialog({channel: channel}, '/notify', message);
+        bot.beginDialog({channel: settings}, '/notify', message);
       }
     }, 1000);
   };

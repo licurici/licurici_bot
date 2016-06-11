@@ -8,6 +8,8 @@ var reports = require("./src/reports");
 var serialComunication = require('./src/serial');
 var Events = require('./src/events.js').default;
 
+var instagram = require('./src/instagram');
+
 var settings = require('./settings.js');
 
 var connectedToSlack = false;
@@ -27,7 +29,6 @@ var mainDialog = new builder.CommandDialog()
   });
 
 slackBot.add('/', mainDialog);
-
 slackBot.listenForMentions();
 
 bot.startRTM(function(err,bot,payload) {
@@ -36,6 +37,11 @@ bot.startRTM(function(err,bot,payload) {
   }
 
   console.log("Connected to slack.");
+
+
+  instagram.init(serialComunication, slackBot);
+
+  
   connectedToSlack = true;
 });
 
@@ -69,4 +75,4 @@ reports.bind(slackBot, mainDialog, serialComunication);
 
 var events = new Events(slackBot, settings.slackChannel);
 
-serialComunication.init(settings.serialPort, events.send);
+//serialComunication.init(settings.serialPort, events.send);
