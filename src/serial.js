@@ -21,7 +21,6 @@ function isEvent(data) {
 }
 
 module.exports.init = function(name, eventFunction) {
-
   port = new SerialPort(name, {
     parser: serialport.parsers.readline('\r\n')
   });
@@ -92,9 +91,13 @@ function roadAction(group, callback) {
 }
 
 function getReport(callback) {
-  port.write('5\r\n', function(err, bytesWritten) {
+  port.write('6\r\n', function(err, bytesWritten) {
     reportCallback = callback;
   });
+}
+
+function allHappy() {
+  port.write('7\r\n');
 }
 
 function hideAction(group, percent, callback) {
@@ -113,14 +116,14 @@ function hideAction(group, percent, callback) {
   });
 }
 
-
 module.exports.getReport = getReport;
+module.exports.allHappy = allHappy;
 
 module.exports.do = function(action, callback) {
 
-  if(action.nr == 3) {
+  if(action.nr == 4) {
     hideAction(action.group, action.percent, callback);
-  } else if(action.nr >= 0 && action.nr < 3) {
+  } else if(action.nr >= 0 && action.nr < 4) {
     send(action.nr, action.group, callback);
   } else {
     callback("Unknown action " + action.nr);
@@ -128,7 +131,7 @@ module.exports.do = function(action, callback) {
 };
 
 module.exports.setColor = function(color, callback) {
-  port.write('4\r\n', function(err, bytesWritten) {
+  port.write('5\r\n', function(err, bytesWritten) {
     if (err) {
       return callback(err);
     }

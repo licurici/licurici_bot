@@ -3,7 +3,7 @@ var serialComunication = require('./serial');
 
 var animations = {
   "Sa ne aratam": "/animations/show",
-  "Sa ne bucuram (nu e implementat)": "/animations/joy",
+  "Sa ne bucuram": "/animations/happy",
   "Sclipim": "/animations/flicker",
   "Sarim": "/animations/road",
   "Sa ne ascundem": "/animations/hide"
@@ -61,6 +61,26 @@ function bindQuiz(slackBot) {
       }
   ]);
 
+  slackBot.add('/animations/joy', [
+      function (session) {
+        session.dialogData.action = {};
+        session.dialogData.action.nr = 3;
+
+        builder.Prompts.number(session, "Oare care grup sa se bucure?");
+      },
+      function (session, results) {
+        session.dialogData.action.group = results.response;
+        serialComunication.do(session.dialogData.action, function(err) {
+          if(err) {
+            session.send("Nu putem sa ne bucuram...");
+            session.send(err);
+          } else {
+            session.send("Ne bucuram!!");
+          }
+        });
+        session.endDialog();
+      }
+  ]);
 
   slackBot.add('/animations/road', [
       function (session) {
@@ -86,7 +106,7 @@ function bindQuiz(slackBot) {
   slackBot.add('/animations/hide', [
       function (session) {
         session.dialogData.action = {};
-        session.dialogData.action.nr = 3;
+        session.dialogData.action.nr = 4;
 
         builder.Prompts.number(session, "Oare care grup se ascunde?");
       },
