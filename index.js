@@ -44,6 +44,10 @@ bot.startRTM(function(err,bot,payload) {
   instagram.init(serialComunication, slackBot);
   twitter.init(serialComunication, slackBot);
 
+  setTimeout(function() {
+    serialComunication.allHappy();
+  }, 1000);
+
   connectedToSlack = true;
 });
 

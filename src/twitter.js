@@ -26,6 +26,8 @@ function beginListen(serial, bot) {
         }
 
         if (messages.length >= 1) {
+          serial.allHappy();
+
           message += messages.join('\n\n');
 
           bot.beginDialog({channel: settings.slackChannel}, '/notify', message);

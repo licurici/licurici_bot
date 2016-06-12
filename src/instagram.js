@@ -11,6 +11,8 @@ function beginListen(serial, bot) {
 
       if (!err) {
         if(count < data.data.media_count) {
+          serial.allHappy();
+
           var diff = data.data.media_count - count;
           var cnt = "";
 
