@@ -8,7 +8,7 @@ var max_id = "";
 function beginListen(serial, bot) {
   setTimeout(function() {
     client.get('search/tweets', {q: settings.hashTag}, function(error, tweets, response) {
-      if(tweets.search_metadata.max_id != max_id) {
+      if(tweets.search_metadata && tweets.search_metadata.max_id != max_id) {
 
         var messages = [];
         var message;
@@ -21,14 +21,15 @@ function beginListen(serial, bot) {
 
         if(messages.length === 1) {
           message = "avem *un tweet* nou cu `#" + settings.hashTag + "`\n";
-        } else {
+        } else if (messages.length > 1) {
           message = "avem *" + messages.length + " tweeturi* noi cu `#" + settings.hashTag + "`\n";
         }
 
-        message += messages.join('\n\n');
+        if (messages.length >= 1) {
+          message += messages.join('\n\n');
 
-        bot.beginDialog({channel: settings.slackChannel}, '/notify', message);
-
+          bot.beginDialog({channel: settings.slackChannel}, '/notify', message);
+        }
         max_id = tweets.search_metadata.max_id;
       }
 

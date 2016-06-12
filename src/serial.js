@@ -95,7 +95,7 @@ function allHappy() {
 }
 
 function hideAction(index, group, percent, callback) {
-  send(index, 3, group, function(err) {
+  send(index, 4, group, function(err) {
     if (err) {
       return callback(err);
     }
@@ -114,6 +114,8 @@ module.exports.getReport = getReport;
 module.exports.allHappy = allHappy;
 
 module.exports.do = function(index, action, callback) {
+
+  console.log("==>", index, action);
 
   if(action.nr == 4) {
     hideAction(index, action.group, action.percent, callback);

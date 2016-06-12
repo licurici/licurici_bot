@@ -4,7 +4,9 @@ var serialPort;
 function bindReport(slackBot) {
   slackBot.add('/reports', [
     function (session) {
-      serialPort.getReport(function(report) {
+      var index = session.userData.treeIndex;
+
+      serialPort.getReport(index, function(report) {
         session.send(report);
         session.endDialog();
       });

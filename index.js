@@ -39,18 +39,34 @@ bot.startRTM(function(err,bot,payload) {
 
   console.log("Connected to slack.");
 
+  serialComunication.init(settings.serialPorts, events.send);
 
-  //instagram.init(serialComunication, slackBot);
+  instagram.init(serialComunication, slackBot);
   twitter.init(serialComunication, slackBot);
 
   connectedToSlack = true;
 });
 
 var actions = {
+    "Alege copacul": "/tree",
     "Schimba animatie": "/animations",
     "Schimba culoarea": "/colors",
     "Rapoarte": "/reports"
 };
+
+slackBot.add('/tree', [
+    function (session) {
+      builder.Prompts.number(session, "Alege copacul");
+    }, function (session, response) {
+      if(response.response < 0 && response.response > settings.serialPorts.length - 1) {
+        response.response = 0;
+      }
+
+      session.userData.treeIndex = response.response;
+
+      session.endDialog();
+    }
+]);
 
 slackBot.add('/notify', [
     function (session, message) {
@@ -61,7 +77,11 @@ slackBot.add('/notify', [
 
 slackBot.add('/licurici', [
     function (session) {
-        builder.Prompts.choice(session, "Ce vrei sa facem?", actions);
+      if(session.userData.treeIndex === undefined || session.userData.treeIndex === null) {
+        session.beginDialog("/tree");
+      } else {
+        builder.Prompts.choice(session, "Ce vrei sa facem in *copacul " + session.userData.treeIndex + "*?", actions);
+      }
     },
     function (session, results) {
       session.userData.name = results.response;
@@ -75,5 +95,3 @@ colors.bind(slackBot, mainDialog);
 reports.bind(slackBot, mainDialog, serialComunication);
 
 var events = new Events(slackBot, settings.slackChannel);
-
-serialComunication.init(settings.serialPorts, events.send);

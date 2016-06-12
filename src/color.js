@@ -41,7 +41,9 @@ function bindQuiz(slackBot) {
   ]);
 
   function updateColor(session, color) {
-    serialComunication.setColor(color, function(err) {
+    var index = session.userData.treeIndex;
+
+    serialComunication.setColor(index, color, function(err) {
       if(err) {
         session.send("Nu putem schimba culoarea...");
         session.send(err);

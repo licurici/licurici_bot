@@ -27,8 +27,10 @@ function bindQuiz(slackBot) {
         builder.Prompts.number(session, "Oare care grup se apara?");
       },
       function (session, results) {
+        var index = session.userData.treeIndex;
         session.dialogData.action.group = results.response;
-        serialComunication.do(session.dialogData.action, function(err) {
+
+        serialComunication.do(index, session.dialogData.action, function(err) {
           if(err) {
             session.send("Nu putem aparea...");
             session.send(err);
@@ -43,13 +45,15 @@ function bindQuiz(slackBot) {
   slackBot.add('/animations/flicker', [
       function (session) {
         session.dialogData.action = {};
-        session.dialogData.action.nr = 1;
+        session.dialogData.action.nr = 2;
 
         builder.Prompts.number(session, "Oare care grup sa sclipeasca?");
       },
       function (session, results) {
+        var index = session.userData.treeIndex;
+
         session.dialogData.action.group = results.response;
-        serialComunication.do(session.dialogData.action, function(err) {
+        serialComunication.do(index, session.dialogData.action, function(err) {
           if(err) {
             session.send("Nu putem sclipi...");
             session.send(err);
@@ -61,16 +65,18 @@ function bindQuiz(slackBot) {
       }
   ]);
 
-  slackBot.add('/animations/joy', [
+  slackBot.add('/animations/happy', [
       function (session) {
         session.dialogData.action = {};
-        session.dialogData.action.nr = 3;
+        session.dialogData.action.nr = 1;
 
         builder.Prompts.number(session, "Oare care grup sa se bucure?");
       },
       function (session, results) {
+        var index = session.userData.treeIndex;
+
         session.dialogData.action.group = results.response;
-        serialComunication.do(session.dialogData.action, function(err) {
+        serialComunication.do(index, session.dialogData.action, function(err) {
           if(err) {
             session.send("Nu putem sa ne bucuram...");
             session.send(err);
@@ -85,13 +91,15 @@ function bindQuiz(slackBot) {
   slackBot.add('/animations/road', [
       function (session) {
         session.dialogData.action = {};
-        session.dialogData.action.nr = 2;
+        session.dialogData.action.nr = 3;
 
         builder.Prompts.number(session, "Oare care grup sa sara?");
       },
       function (session, results) {
+        var index = session.userData.treeIndex;
+
         session.dialogData.action.group = results.response;
-        serialComunication.do(session.dialogData.action, function(err) {
+        serialComunication.do(index, session.dialogData.action, function(err) {
           if(err) {
             session.send("Nu putem sari...");
             session.send(err);
@@ -115,8 +123,10 @@ function bindQuiz(slackBot) {
         builder.Prompts.number(session, "Care e procentul de licurici care se sting?");
       },
       function (session, results) {
+        var index = session.userData.treeIndex;
+
         session.dialogData.action.percent = results.response;
-        serialComunication.do(session.dialogData.action, function(err) {
+        serialComunication.do(index, session.dialogData.action, function(err) {
           if(err) {
             session.send("Nu ne putem ascunde...");
             session.send(err);
