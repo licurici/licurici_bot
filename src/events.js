@@ -1,3 +1,5 @@
+var settings = require('../settings.js');
+
 function events(bot, channel) {
 
   var events = {};
@@ -15,7 +17,7 @@ function events(bot, channel) {
       }
 
       if(message !== "") {
-        bot.beginDialog({channel: settings}, '/notify', message);
+        bot.beginDialog({channel: settings.slackChannel}, '/notify', message);
       }
     }, 1000);
   };
