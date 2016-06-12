@@ -1,6 +1,6 @@
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
-var port;
+var ports = [];
 var reportCallback = null;
 var gettingReport = false;
 var reportData = "";
@@ -20,55 +20,59 @@ function isEvent(data) {
   return result;
 }
 
-module.exports.init = function(name, eventFunction) {
-  port = new SerialPort(name, {
-    parser: serialport.parsers.readline('\r\n')
-  });
+module.exports.init = function(serialPorts, eventFunction) {
+  serialPorts.forEach(function(name) {
+    port = new SerialPort(name, {
+      parser: serialport.parsers.readline('\r\n')
+    });
 
-  port.on('open', function () {
-    console.log("Connected to", name);
-  });
+    port.on('open', function () {
+      console.log("Connected to", name);
+    });
 
-  port.on('data', function (data) {
-    if(data === "BEGIN REPORT") {
-      gettingReport = true;
-      reportData = "";
-      return;
-    }
-
-    if(data === "END REPORT") {
-      gettingReport = false;
-
-      if(reportCallback) {
-        reportCallback(reportData);
+    port.on('data', function (data) {
+      if(data === "BEGIN REPORT") {
+        gettingReport = true;
+        reportData = "";
+        return;
       }
 
-      reportCallback = null;
-    }
+      if(data === "END REPORT") {
+        gettingReport = false;
 
-    if(gettingReport) {
-      reportData += data + "\n";
-    } else {
-      data = data.toString().trim();
-      var event = data.split(" ")[0];
+        if(reportCallback) {
+          reportCallback(reportData);
+        }
 
-      if(data !== "" && isEvent(event)) {
-        if(eventFunction) {
-          eventFunction(event, data);
+        reportCallback = null;
+      }
+
+      if(gettingReport) {
+        reportData += data + "\n";
+      } else {
+        data = data.toString().trim();
+        var event = data.split(" ")[0];
+
+        if(data !== "" && isEvent(event)) {
+          if(eventFunction) {
+            eventFunction(event, data);
+          }
         }
       }
-    }
+    });
+
+    ports.push(port);
   });
 };
 
 
-function send(action, group, callback) {
-  port.write(action + '\r\n', function(err, bytesWritten) {
+function send(index, action, group, callback) {
+  ports[index].write(action + '\r\n', function(err, bytesWritten) {
     if (err) {
       return callback(err);
     }
 
-    port.write(group + '\r\n', function(err, bytesWritten) {
+    ports[index].write(group + '\r\n', function(err, bytesWritten) {
       if (err) {
         return callback(err);
       }
@@ -78,35 +82,25 @@ function send(action, group, callback) {
   });
 }
 
-function show(group, callback) {
-  send(0, group, callback);
-}
-
-function flickerAction(group, callback) {
-  send(1, group, callback);
-}
-
-function roadAction(group, callback) {
-  send(2, group, callback);
-}
-
-function getReport(callback) {
-  port.write('6\r\n', function(err, bytesWritten) {
+function getReport(index, callback) {
+  ports[index].write('6\r\n', function(err, bytesWritten) {
     reportCallback = callback;
   });
 }
 
 function allHappy() {
-  port.write('7\r\n');
+  ports.forEach(function(port) {
+    port.write('7\r\n');
+  });
 }
 
-function hideAction(group, percent, callback) {
-  send(3, group, function(err) {
+function hideAction(index, group, percent, callback) {
+  send(index, 3, group, function(err) {
     if (err) {
       return callback(err);
     }
 
-    port.write(percent + '\r\n', function(err, bytesWritten) {
+    ports[index].write(percent + '\r\n', function(err, bytesWritten) {
       if (err) {
         return callback(err);
       }
@@ -119,24 +113,24 @@ function hideAction(group, percent, callback) {
 module.exports.getReport = getReport;
 module.exports.allHappy = allHappy;
 
-module.exports.do = function(action, callback) {
+module.exports.do = function(index, action, callback) {
 
   if(action.nr == 4) {
-    hideAction(action.group, action.percent, callback);
+    hideAction(index, action.group, action.percent, callback);
   } else if(action.nr >= 0 && action.nr < 4) {
-    send(action.nr, action.group, callback);
+    send(index, action.nr, action.group, callback);
   } else {
     callback("Unknown action " + action.nr);
   }
 };
 
-module.exports.setColor = function(color, callback) {
-  port.write('5\r\n', function(err, bytesWritten) {
+module.exports.setColor = function(index, color, callback) {
+  ports[index].write('5\r\n', function(err, bytesWritten) {
     if (err) {
       return callback(err);
     }
 
-    port.write(color.red +'\r\n' + color.green +'\r\n' + color.blue +'\r\n', function(err, bytesWritten) {
+    ports[index].write(color.red +'\r\n' + color.green +'\r\n' + color.blue +'\r\n', function(err, bytesWritten) {
       if (err) {
         return callback(err);
       }

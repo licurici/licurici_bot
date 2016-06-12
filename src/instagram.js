@@ -1,8 +1,7 @@
 var settings = require('../settings.js');
-
 var instagramWrapi = require('@wrapi/instagram');
 
-var client = new instagramWrapi(settings.instagramToken);
+var client = new instagramWrapi(settings.instagram);
 var count = 0;
 
 

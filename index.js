@@ -9,6 +9,7 @@ var serialComunication = require('./src/serial');
 var Events = require('./src/events.js').default;
 
 var instagram = require('./src/instagram');
+var twitter = require('./src/twitter');
 
 var settings = require('./settings.js');
 
@@ -39,9 +40,9 @@ bot.startRTM(function(err,bot,payload) {
   console.log("Connected to slack.");
 
 
-  instagram.init(serialComunication, slackBot);
+  //instagram.init(serialComunication, slackBot);
+  twitter.init(serialComunication, slackBot);
 
-  
   connectedToSlack = true;
 });
 
@@ -75,4 +76,4 @@ reports.bind(slackBot, mainDialog, serialComunication);
 
 var events = new Events(slackBot, settings.slackChannel);
 
-//serialComunication.init(settings.serialPort, events.send);
+serialComunication.init(settings.serialPorts, events.send);

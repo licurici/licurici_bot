@@ -1,13 +1,14 @@
-
-
-
 module.exports = {
   slackToken: "",
   slackChannel: "",
-  serialPort: "",
+  serialPorts: [""],
 
-  instagramId: "",
-  instagramKey: "",
-  instagramToken: "",
-  hashTag: ""
+  hashTag: "",
+
+  instagram: "",
+  twitter: {
+    consumer_key: '',
+    consumer_secret: '',
+    bearer_token: ''
+  }
 };
