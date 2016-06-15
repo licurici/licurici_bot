@@ -28,6 +28,10 @@ function beginListen(serial, bot) {
           count = data.data.media_count;
           bot.beginDialog({channel: settings.slackChannel}, '/notify', message);
         }
+      } else if(err) {
+        bot.beginDialog({channel: settings.slackChannel}, '/notify', err);
+      } else {
+        bot.beginDialog({channel: settings.slackChannel}, '/notify', JSON.stringify(data));
       }
     });
   }, 10000);
