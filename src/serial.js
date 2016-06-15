@@ -115,8 +115,6 @@ module.exports.allHappy = allHappy;
 
 module.exports.do = function(index, action, callback) {
 
-  console.log("==>", index, action);
-
   if(action.nr == 4) {
     hideAction(index, action.group, action.percent, callback);
   } else if(action.nr >= 0 && action.nr < 4) {
@@ -139,5 +137,49 @@ module.exports.setColor = function(index, color, callback) {
 
       callback(null);
     });
+  });
+};
+
+module.exports.setAudioThreshold = function(index, value, callback) {
+  ports[index].write('9\r\n', function(err, bytesWritten) {
+    if (err) {
+      return callback(err);
+    }
+
+    ports[index].write(value +'\r\n', function(err, bytesWritten) {
+      if (err) {
+        return callback(err);
+      }
+
+      callback(null);
+    });
+  });
+};
+
+module.exports.setLightThreshold = function(index, value, callback) {
+  ports[index].write('10\r\n', function(err, bytesWritten) {
+    if (err) {
+      return callback(err);
+    }
+
+    ports[index].write(value +'\r\n', function(err, bytesWritten) {
+      if (err) {
+        return callback(err);
+      }
+
+      callback(null);
+    });
+  });
+};
+
+module.exports.stamina = function(index, callback) {
+  ports[index].write('8\r\n', function(err, bytesWritten) {
+    if (err) {
+      return callback(err);
+    }
+
+    console.log("done stamina");
+
+    callback(null);
   });
 };

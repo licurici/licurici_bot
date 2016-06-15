@@ -2,6 +2,7 @@ var Botkit = require('botkit');
 var builder = require('botbuilder');
 
 var colors = require("./src/color");
+var thresholds = require("./src/thresholds");
 var animations = require("./src/animations");
 var reports = require("./src/reports");
 
@@ -55,6 +56,9 @@ var actions = {
     "Alege copacul": "/tree",
     "Schimba animatie": "/animations",
     "Schimba culoarea": "/colors",
+    "Schimba limita audio": "/threshold/audio",
+    "Schimba limita lumina": "/threshold/light",
+    "Stamina": "/stamina",
     "Rapoarte": "/reports"
 };
 
@@ -79,6 +83,15 @@ slackBot.add('/notify', [
     }
 ]);
 
+slackBot.add('/stamina', [
+    function (session, message) {
+      serialComunication.stamina(function(err) {
+        session.send(err ? "Nu merge stamina..." : "Stamina!");
+        session.endDialog();
+      });
+    }
+]);
+
 slackBot.add('/licurici', [
     function (session) {
       if(session.userData.treeIndex === undefined || session.userData.treeIndex === null) {
@@ -96,6 +109,7 @@ slackBot.add('/licurici', [
 
 animations.bind(slackBot, mainDialog);
 colors.bind(slackBot, mainDialog);
+thresholds.bind(slackBot, mainDialog);
 reports.bind(slackBot, mainDialog, serialComunication);
 
 var events = new Events(slackBot, settings.slackChannel);
