@@ -9,7 +9,7 @@ function beginListen(serial, bot) {
     client.tags.get(settings.hashTag, function(err, data) {
       beginListen(serial, bot);
 
-      if (!err) {
+      if (!err && data && data.data) {
         if(count < data.data.media_count) {
           serial.allHappy();
 
