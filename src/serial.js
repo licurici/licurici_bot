@@ -22,6 +22,7 @@ function isEvent(data) {
 
 module.exports.init = function(serialPorts, eventFunction) {
   serialPorts.forEach(function(name) {
+
     port = new SerialPort(name, {
       parser: serialport.parsers.readline('\r\n')
     });

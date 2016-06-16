@@ -2,12 +2,17 @@ var builder = require('botbuilder');
 var serialComunication = require('./serial');
 
 var colors = {
-  "Galben viu": { red: 10, green: 10, blue: 5},
-  "Galbenish-Portocaliu": { red: 10, green: 8, blue: 5},
-  "Galbenish-Verde": { red: 8, green: 10, blue: 5},
-  "Verde": { red: 0, green: 10, blue: 0},
+  "Galben viu": { red: 15, green: 10, blue: 0},
+  "Galbenish-Portocaliu": { red: 10, green: 3, blue: 0},
+  "Galbenish-Verde": { red: 10, green: 10, blue: 0},
+  "Verde": { red: 13, green: 19, blue: 3},
+  "Verde albastrui": { red: 13, green: 20, blue: 4},
+  "Verde galbui": { red: 10, green: 20, blue: 0},
+  "Verde viu": { red: 6, green: 20, blue: 1},
   "Alta": "/colors/other",
 };
+
+//985600 656128 657920
 
 
 function checkColor(session, value) {
@@ -42,6 +47,8 @@ function bindQuiz(slackBot) {
 
   function updateColor(session, color) {
     var index = session.userData.treeIndex;
+
+    console.log("color: ", color);
 
     serialComunication.setColor(index, color, function(err) {
       if(err) {
