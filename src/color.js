@@ -12,9 +12,6 @@ var colors = {
   "Alta": "/colors/other",
 };
 
-//985600 656128 657920
-
-
 function checkColor(session, value) {
   value = parseInt(value);
 

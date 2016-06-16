@@ -85,7 +85,7 @@ slackBot.add('/notify', [
 
 slackBot.add('/stamina', [
     function (session, message) {
-      serialComunication.stamina(function(err) {
+      serialComunication.stamina(session.userData.treeIndex, function(err) {
         session.send(err ? "Nu merge stamina..." : "Stamina!");
         session.endDialog();
       });
