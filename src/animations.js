@@ -15,7 +15,7 @@ function bindQuiz(slackBot) {
       builder.Prompts.choice(session, "Oare ce vrei sa facem?", animations);
     },
     function (session, results) {
-      session.replaceDialog(animations[results.response.entity]);
+      session.beginDialog(animations[results.response.entity]);
     }
   ]);
 

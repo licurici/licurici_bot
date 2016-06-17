@@ -16,11 +16,11 @@ function bindReport(slackBot) {
 
 function bindShort(slackBot, mainDialog) {
   mainDialog.matches('rapoarte', function (session, result) {
-    session.replaceDialog('/reports');
+    session.beginDialog('/reports');
   });
 
   mainDialog.matches('raport', function (session, result) {
-    session.replaceDialog('/reports');
+    session.beginDialog('/reports');
   });
 }
 

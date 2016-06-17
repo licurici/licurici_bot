@@ -103,7 +103,7 @@ slackBot.add('/licurici', [
     function (session, results) {
       session.userData.name = results.response;
 
-      session.replaceDialog(actions[results.response.entity]);
+      session.beginDialog(actions[results.response.entity]);
     }
 ]);
 

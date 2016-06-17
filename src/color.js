@@ -34,7 +34,7 @@ function bindQuiz(slackBot) {
       function (session, results) {
 
         if(typeof colors[results.response.entity] == 'string') {
-          session.replaceDialog(colors[results.response.entity]);
+          session.beginDialog(colors[results.response.entity]);
         } else {
           updateColor(session, colors[results.response.entity]);
           session.endDialog();
