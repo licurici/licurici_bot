@@ -15,7 +15,7 @@ var colors = {
 function checkColor(session, value) {
   value = parseInt(value);
 
-  if(isNaN(value) || value < 0 || value > 20) {
+  if(isNaN(value) || value < 0 || value > 200) {
     session.send('Culoarea trebuie sa fie un numar de la 0 la 20');
     session.endDialog();
 
