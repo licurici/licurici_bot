@@ -1,11 +1,11 @@
-module.exports = {
+ module.exports = {
   slackToken: "",
   slackChannel: "",
   serialPorts: [""],
 
-  hashTag: "",
+  hashTag: "autumncamp2016",
 
-  instagram: "",
+  instagram: "autumncamp2016",
   twitter: {
     consumer_key: '',
     consumer_secret: '',

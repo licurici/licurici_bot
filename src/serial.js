@@ -5,6 +5,16 @@ var reportCallback = null;
 var gettingReport = false;
 var reportData = "";
 
+serialport.list(function (err, ports) {
+  ports.forEach(function(port) {
+    console.log(port.comName);
+    console.log(port.pnpId);
+    console.log(port.manufacturer);
+  });
+});
+
+
+
 var events = ["SoundDetected", "Hiding"];
 
 function isEvent(data) {
@@ -54,7 +64,7 @@ module.exports.init = function(serialPorts, eventFunction) {
         data = data.toString().trim();
         var event = data.split(" ")[0];
 
-        if(data !== "" && isEvent(event)) {
+        if(data.indexOf("Hiding") == -1 && data.indexOf("SoundDetected") == -1 && data !== "" && isEvent(event)) {
           if(eventFunction) {
             eventFunction(event, data);
           }

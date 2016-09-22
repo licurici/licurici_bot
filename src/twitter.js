@@ -8,7 +8,7 @@ var max_id = "";
 function beginListen(serial, bot) {
   setTimeout(function() {
     client.get('search/tweets', {q: settings.hashTag}, function(error, tweets, response) {
-      if(tweets.search_metadata && tweets.search_metadata.max_id != max_id) {
+      if(tweets && tweets.search_metadata && tweets.search_metadata.max_id != max_id) {
 
         var messages = [];
         var message;
