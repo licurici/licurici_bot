@@ -40,12 +40,7 @@ function beginListen(serial, bot) {
 function init(serial, bot) {
   client.tags.get(settings.hashTag, function(err, data) {
     if (!err && data.data) {
-      var message = "pe instagram sunt *" + data.data.media_count + "* poze cu #" + settings.hashTag + "\n";
-      message += "https://www.instagram.com/explore/tags/" + settings.hashTag + "\n";
-
       count = data.data.media_count;
-      bot.beginDialog({channel: settings.slackChannel}, '/notify', message);
-
       beginListen(serial, bot);
     } else {
       bot.beginDialog({channel: settings.slackChannel}, '/notify', "Nu merge instagram!");

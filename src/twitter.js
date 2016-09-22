@@ -6,20 +6,10 @@ var client = new Twitter(settings.twitter);
 
 var max_id = "";
 
-var fd = fs.openSync("twitter_max_id.txt");
-
-if(fd) {
-  fs.readSync(fd, max_id);
-  fs.closeSync(fd);
-  max_id = parseInt(max_id) || 0;
-}
-
-
 function beginListen(serial, bot) {
   setTimeout(function() {
     client.get('search/tweets', {q: settings.hashTag}, function(error, tweets, response) {
       if(tweets && tweets.search_metadata && tweets.search_metadata.max_id != max_id) {
-
         var messages = [];
         var message;
 
@@ -44,7 +34,6 @@ function beginListen(serial, bot) {
         }
 
         max_id = tweets.search_metadata.max_id;
-        fs.writeFileSync("twitter_max_id.txt", max_id);
       }
 
       beginListen(serial, bot);
@@ -55,19 +44,6 @@ function beginListen(serial, bot) {
 function init(serial, bot) {
   client.get('search/tweets', {q: settings.hashTag}, function(error, tweets, response) {
     max_id = tweets.search_metadata.max_id;
-    var last = tweets.statuses[0];
-    var message;
-
-    if(last) {
-      var date = new Date(last.created_at);
-      message = "*ultimul tweet* cu `#" + settings.hashTag + "` a fost la ora " + date.toLocaleTimeString() + "\n";
-      message += ":left_speech_bubble: " + last.text;
-    } else {
-      message = "*inca nu* avem tweeturi cu `#" + settings.hashTag + "`";
-    }
-
-    bot.beginDialog({channel: settings.slackChannel}, '/notify', message);
-
     beginListen(serial, bot);
   });
 }
