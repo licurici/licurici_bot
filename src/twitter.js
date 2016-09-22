@@ -5,6 +5,15 @@ var client = new Twitter(settings.twitter);
 
 var max_id = "";
 
+var fd = fs.openSync("twitter_max_id.txt");
+
+if(fd) {
+  fs.readSync(fd, max_id);
+  fs.closeSync(fd);
+  max_id = parseInt(max_id) || 0;
+}
+
+
 function beginListen(serial, bot) {
   setTimeout(function() {
     client.get('search/tweets', {q: settings.hashTag}, function(error, tweets, response) {
@@ -32,7 +41,9 @@ function beginListen(serial, bot) {
 
           bot.beginDialog({channel: settings.slackChannel}, '/notify', message);
         }
+
         max_id = tweets.search_metadata.max_id;
+        fs.writeFileSync("twitter_max_id.txt", max_id);
       }
 
       beginListen(serial, bot);
