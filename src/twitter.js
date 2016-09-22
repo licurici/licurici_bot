@@ -1,5 +1,6 @@
 var Twitter = require('twitter');
 var settings = require('../settings.js');
+const fs = require('fs');
 
 var client = new Twitter(settings.twitter);
 
