@@ -8,7 +8,7 @@ var max_id = "";
 
 function beginListen(serial, bot) {
   setTimeout(function() {
-    client.get('search/tweets', {q: settings.hashTag}, function(error, tweets, response) {
+    client.get('search/tweets', {q: settings.hashTag.join(" OR ")}, function(error, tweets, response) {
       if(tweets && tweets.search_metadata && tweets.search_metadata.max_id != max_id) {
         var messages = [];
         var message;
@@ -20,9 +20,9 @@ function beginListen(serial, bot) {
         }
 
         if(messages.length === 1) {
-          message = "avem *un tweet* nou cu `#" + settings.hashTag + "`\n";
+          message = "avem *un tweet* nou cu `#" + settings.hashTag.join(" OR #") + "`\n";
         } else if (messages.length > 1) {
-          message = "avem *" + messages.length + " tweeturi* noi cu `#" + settings.hashTag + "`\n";
+          message = "avem *" + messages.length + " tweeturi* noi cu `#" + settings.hashTag.join(" OR #") + "`\n";
         }
 
         if (messages.length >= 1) {
@@ -42,7 +42,7 @@ function beginListen(serial, bot) {
 }
 
 function init(serial, bot) {
-  client.get('search/tweets', {q: settings.hashTag}, function(error, tweets, response) {
+  client.get('search/tweets', {q: settings.hashTag.join(" OR ")}, function(error, tweets, response) {
     max_id = tweets.search_metadata.max_id;
     beginListen(serial, bot);
   });

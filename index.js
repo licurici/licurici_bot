@@ -42,7 +42,7 @@ bot.startRTM(function(err,bot,payload) {
 
   serialComunication.init(settings.serialPorts, events.send);
 
-  instagram.init(serialComunication, slackBot);
+  //instagram.init(serialComunication, slackBot);
   twitter.init(serialComunication, slackBot);
 
   setTimeout(function() {
@@ -71,7 +71,6 @@ slackBot.add('/tree', [
       }
 
       session.userData.treeIndex = response.response;
-
       session.endDialog();
     }
 ]);
@@ -102,7 +101,6 @@ slackBot.add('/licurici', [
     },
     function (session, results) {
       session.userData.name = results.response;
-
       session.beginDialog(actions[results.response.entity]);
     }
 ]);
