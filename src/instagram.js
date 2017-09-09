@@ -1,53 +1,93 @@
 var settings = require('../settings.js');
-var instagramWrapi = require('@wrapi/instagram');
 
-var client = new instagramWrapi(settings.instagram);
-var count = 0;
+var count = {};
 
-function beginListen(serial, bot) {
+var request = require('request');
+
+function getCounter(hashTag, callback) {
+  //console.log('https://www.instagram.com/explore/tags/' + hashTag + '/');
+  request('https://www.instagram.com/explore/tags/' + hashTag + '/', function (error, response, body) {
+    //console.log('error:', error); // Print the error if one occurred
+    //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    //console.log('body:', body); // Print the response status code if a response was received
+
+    if (error || response.statusCode != 200) {
+      callback(error || response.statusCode);
+      return;
+    }
+
+    var data = body.split("window._sharedData = ");
+    if (data.length != 2) {
+      return callback("can not parse instagram page.");
+    }
+
+    data = data[1];
+    data = data.split(";</script>");
+
+    if (data.length < 2) {
+      return callback("can not parse instagram page.");
+    }
+
+    try {
+      data = data[0];
+      data = JSON.parse(data);
+      var lastPhoto = null;
+
+      try {
+        lastPhoto = data.entry_data.TagPage[0].tag.media.nodes[0].display_src;
+      } catch(e) {}
+
+      callback(null, data.entry_data.TagPage[0].tag.media.count, lastPhoto);
+    } catch(err) {
+      callback(err);
+    }
+  });
+}
+
+function beginListen(serial, bot, hashTag) {
   setTimeout(function () {
-    settings.hashTag.forEach((hashTag) => {
-      client.tags.get(hashTag, function (err, data) {
-        beginListen(serial, bot);
+    getCounter(hashTag, function (err, countPhotos, lastPhoto) {
+      beginListen(serial, bot, hashTag);
 
-        if (!err && data && data.data) {
-          if (count < data.data.media_count) {
-            serial.allHappy();
+      if(err) {
+        bot.beginDialog({ channel: settings.slackChannel }, '/notify', JSON.stringify(data));
+        return;
+      }
 
-            var diff = data.data.media_count - count;
-            var cnt = "";
+      if (countPhotos <= count[hashTag]) {
+        return;
+      }
 
-            if (diff == 1) {
-              cnt = "este *o poza noua*";
-            } else if (diff > 1) {
-              cnt = "sunt *" + diff + " poze noi*";
-            }
+      serial.allHappy();
+      var diff = countPhotos - count[hashTag];
+      var cnt = "";
 
-            var message = "pe instagram " + cnt + " cu #" + hashTag + "\n";
-            message += "https://www.instagram.com/explore/tags/" + hashTag + "\n";
+      if (diff == 1) {
+        cnt = "este *o poza noua*";
+      } else if (diff > 1) {
+        cnt = "sunt *" + diff + " poze noi*";
+      }
 
-            count = data.data.media_count;
-            bot.beginDialog({ channel: settings.slackChannel }, '/notify', message);
-          }
-        } else if (err) {
-          bot.beginDialog({ channel: settings.slackChannel }, '/notify', err);
-        } else {
-          bot.beginDialog({ channel: settings.slackChannel }, '/notify', JSON.stringify(data));
-        }
-      });
+      var message = "pe instagram " + cnt + " cu #" + hashTag + "\n";
+      message += lastPhoto + "\n";
+      message += "https://www.instagram.com/explore/tags/" + hashTag + "\n";
+
+      count[hashTag] = countPhotos;
+      bot.beginDialog({ channel: settings.slackChannel }, '/notify', message);
     });
-  }, ((3600 / 500) / settings.hashTag.length) * 1000);
+  }, 3000);
 }
 
 function init(serial, bot) {
   settings.hashTag.forEach((hashTag) => {
-    client.tags.get(hashTag, function (err, data) {
-      if (!err && data.data) {
-        count = data.data.media_count;
-        beginListen(serial, bot);
-      } else {
-        bot.beginDialog({ channel: settings.slackChannel }, '/notify', "Nu merge instagram! " + JSON.stringify(data));
+    getCounter(hashTag, function (err, countPhotos) {
+      if(err) {
+        bot.beginDialog({ channel: settings.slackChannel }, '/notify', "Nu merge instagram! " + JSON.stringify(err));
+        return;
       }
+
+      count[hashTag] = countPhotos;
+      beginListen(serial, bot, hashTag);
     });
   });
 }

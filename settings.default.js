@@ -3,9 +3,9 @@
   slackChannel: "",
   serialPorts: [""],
 
-  hashTag: "autumncamp2016",
+  hashTag: [ "autumncamp2016" ],
 
-  instagram: "autumncamp2016",
+  instagram: "",
   twitter: {
     consumer_key: '',
     consumer_secret: '',

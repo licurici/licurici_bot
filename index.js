@@ -42,7 +42,7 @@ bot.startRTM(function(err,bot,payload) {
 
   serialComunication.init(settings.serialPorts, events.send);
 
-  //instagram.init(serialComunication, slackBot);
+  instagram.init(serialComunication, slackBot);
   twitter.init(serialComunication, slackBot);
 
   setTimeout(function() {
