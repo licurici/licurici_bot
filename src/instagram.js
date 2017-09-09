@@ -50,7 +50,7 @@ function beginListen(serial, bot, hashTag) {
       beginListen(serial, bot, hashTag);
 
       if(err) {
-        bot.beginDialog({ channel: settings.slackChannel }, '/notify', JSON.stringify(data));
+        bot.beginDialog({ channel: settings.slackChannel }, '/notify', JSON.stringify(err));
         return;
       }
 

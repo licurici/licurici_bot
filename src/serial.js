@@ -201,12 +201,6 @@ module.exports.stamina = function(index, callback) {
 
 module.exports.updateAudioLevel = function() {
   ports.forEach((port) => {
-      port.write('11\r\n', function(err, bytesWritten) {
-      if (err) {
-        return;
-      }
-
-      console.log("done updateAudioLevel");
-    });
+    port.write('11\r\n', function(err, bytesWritten) { });
   });
 };

@@ -5,10 +5,15 @@
 
   hashTag: [ "autumncamp2016" ],
 
-  instagram: "",
   twitter: {
     consumer_key: '',
     consumer_secret: '',
     bearer_token: ''
+  },
+
+  music: {
+    sensorInterval: [10, 30],
+    nature: "",
+    city: ""
   }
 };

@@ -9,9 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "audiosource": "^3.0.3",
     "botbuilder": "^1.0.0",
     "botkit": "^0.2.0",
+    "mpg123": "^0.2.3",
     "request": "^2.81.0",
     "restify": "^4.1.0",
     "serialport": "^3.1.2",
