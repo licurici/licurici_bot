@@ -9,8 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@wrapi/instagram": "^0.1.0",
-    "basic-instagram-client": "0.0.2",
     "botbuilder": "^1.0.0",
     "botkit": "^0.2.0",
     "request": "^2.81.0",
