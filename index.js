@@ -5,6 +5,7 @@ var colors = require("./src/color");
 var thresholds = require("./src/thresholds");
 var animations = require("./src/animations");
 var reports = require("./src/reports");
+var audio = require("./src/audio");
 
 var serialComunication = require('./src/serial');
 var Events = require('./src/events.js').default;
@@ -40,7 +41,8 @@ bot.startRTM(function(err,bot,payload) {
 
   console.log("Connected to slack.");
 
-  serialComunication.init(settings.serialPorts, events.send);
+  serialComunication.init(settings.serialPorts, events.send, audio.event);
+  audio.bind(serialComunication);
 
   instagram.init(serialComunication, slackBot);
   twitter.init(serialComunication, slackBot);

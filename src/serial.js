@@ -13,8 +13,6 @@ serialport.list(function (err, ports) {
   });
 });
 
-
-
 var events = ["SoundDetected", "Hiding"];
 
 function isEvent(data) {
@@ -30,7 +28,7 @@ function isEvent(data) {
   return result;
 }
 
-module.exports.init = function(serialPorts, eventFunction) {
+module.exports.init = function(serialPorts, eventFunction, audioFunction) {
   serialPorts.forEach(function(name) {
 
     port = new SerialPort(name, {
@@ -58,6 +56,13 @@ module.exports.init = function(serialPorts, eventFunction) {
         reportCallback = null;
       }
 
+      if(data.indexOf("audio-level:") == 0) {
+        var audio = parseInt(data.split(":")[1]);
+        audioFunction(audio);
+
+        return;
+      }
+
       if(gettingReport) {
         reportData += data + "\n";
       } else {
@@ -75,7 +80,6 @@ module.exports.init = function(serialPorts, eventFunction) {
     ports.push(port);
   });
 };
-
 
 function send(index, action, group, callback) {
   ports[index].write(action + '\r\n', function(err, bytesWritten) {
@@ -192,5 +196,17 @@ module.exports.stamina = function(index, callback) {
     console.log("done stamina");
 
     callback(null);
+  });
+};
+
+module.exports.updateAudioLevel = function() {
+  ports.forEach((port) => {
+      port.write('11\r\n', function(err, bytesWritten) {
+      if (err) {
+        return;
+      }
+
+      console.log("done updateAudioLevel");
+    });
   });
 };
