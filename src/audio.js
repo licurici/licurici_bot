@@ -1,7 +1,7 @@
+var fs = require('fs');
 var settings = require('../settings.js');
 var volume = 0;
 var volumeStep = 0;
-
 
 var mpg = require('mpg123');
 
@@ -17,10 +17,18 @@ function playAudio(fileName) {
     return player;
 }
 
-var naturePlayer = playAudio(settings.music.nature);
-var cityPlayer = playAudio(settings.music.city);
+var naturePlayer;
+var cityPlayer;
 
 module.exports.bind = function (serial) {
+    if (!fs.existsSync(settings.music.nature) && !fs.existsSync(settings.music.city)) {
+        console.error("The audio files are not available. Skip the sount part.");
+        return;
+    }
+
+    naturePlayer = playAudio(settings.music.nature);
+    cityPlayer = playAudio(settings.music.city);
+
     setInterval(function () {
         serial.updateAudioLevel();
     }, 1000);
