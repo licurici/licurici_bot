@@ -51,6 +51,10 @@ bot.startRTM(function(err,bot,payload) {
     serialComunication.allHappy();
   }, 1000);
 
+  setTimeout(function() {
+  audio.closeEvent();
+  }, 6000);
+
   connectedToSlack = true;
 });
 

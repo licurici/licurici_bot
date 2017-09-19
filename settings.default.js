@@ -14,6 +14,7 @@
   music: {
     sensorInterval: [10, 30],
     nature: "",
-    city: ""
+    city: "",
+    cricket: ""
   }
 };
