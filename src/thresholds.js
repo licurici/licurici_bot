@@ -37,6 +37,7 @@ function bindQuiz(slackBot) {
         }
       }
   ]);
+
 }
 
 function bindShort() {

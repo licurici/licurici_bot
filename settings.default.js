@@ -15,5 +15,9 @@
     sensorInterval: [10, 30],
     nature: "",
     city: ""
+  },
+
+  distance: {
+    distanceThreshold: 300
   }
 };

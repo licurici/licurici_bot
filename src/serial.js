@@ -28,7 +28,7 @@ function isEvent(data) {
   return result;
 }
 
-module.exports.init = function(serialPorts, eventFunction, audioFunction) {
+module.exports.init = function(serialPorts, eventFunction, audioFunction, distanceFunction) {
   serialPorts.forEach(function(name) {
 
     port = new SerialPort(name, {
@@ -60,6 +60,12 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction) {
         var audio = parseInt(data.split(":")[1]);
         audioFunction(audio);
 
+        return;
+      }
+
+      if(data.indexOf("distance to object in cm: ") == 0) {
+        var distance = parseInt(data.split(":")[1]);
+        distanceFunction(distance);
         return;
       }
 
@@ -204,3 +210,9 @@ module.exports.updateAudioLevel = function() {
     port.write('11\r\n', function(err, bytesWritten) { });
   });
 };
+
+module.exports.readDistance = function() {
+  ports.forEach((port) => {
+    port.write('12\r\n');
+  });
+}

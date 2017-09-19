@@ -6,6 +6,7 @@ var thresholds = require("./src/thresholds");
 var animations = require("./src/animations");
 var reports = require("./src/reports");
 var audio = require("./src/audio");
+var distance = require("./src/distance");
 
 var serialComunication = require('./src/serial');
 var Events = require('./src/events.js').default;
@@ -41,11 +42,12 @@ bot.startRTM(function(err,bot,payload) {
 
   console.log("Connected to slack.");
 
-  serialComunication.init(settings.serialPorts, events.send, audio.event);
+  serialComunication.init(settings.serialPorts, events.send, audio.event, distance.event);
   audio.bind(serialComunication);
+  distance.bind(serialComunication);
 
-  instagram.init(serialComunication, slackBot);
-  twitter.init(serialComunication, slackBot);
+  //instagram.init(serialComunication, slackBot);
+  //twitter.init(serialComunication, slackBot);
 
   setTimeout(function() {
     serialComunication.allHappy();
