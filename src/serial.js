@@ -29,12 +29,8 @@ function isEvent(data) {
 }
 
 module.exports.init = function(serialPorts, eventFunction, audioFunction, distanceFunction) {
-  var master = "";
-
   serialPorts.forEach(function(name) {
-    if(master == "") {
-      master = name;
-    }
+    var portIndex = -1;
 
     port = new SerialPort(name, {
       parser: serialport.parsers.readline('\r\n')
@@ -68,6 +64,27 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
         return;
       }
 
+      if(data.indexOf("hide:") == 0) {
+        var percent = parseInt(data.split(":")[1]);
+        ports.forEach((port, index) => {
+          port.write('14\r\n' + percent + '\r\n', function(err, bytesWritten) {
+          });
+        });
+
+        return;
+      }
+
+      if(data.indexOf("color:") == 0) {
+        var color = parseInt(data.split(":")[1]);
+
+        ports.forEach((port, index) => {
+          port.write('15\r\n' + color + '\r\n', function(err, bytesWritten) {
+          });
+        });
+
+        return;
+      }
+
       if(data.indexOf("distance to object in cm: ") == 0) {
         var distance = parseInt(data.split(":")[1]);
         distanceFunction(name, distance);
@@ -88,6 +105,7 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
       }
     });
 
+    portIndex = ports.length;
     ports.push(port);
   });
 };
@@ -219,5 +237,11 @@ module.exports.updateAudioLevel = function() {
 module.exports.readDistance = function() {
   ports.forEach((port) => {
     port.write('12\r\n');
+  });
+}
+
+module.exports.hilightFlicker = function() {
+  ports.forEach((port) => {
+    port.write('13\r\n');
   });
 }
