@@ -67,19 +67,23 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
       if(data.indexOf("hide:") == 0) {
         var percent = parseInt(data.split(":")[1]);
         ports.forEach((port, index) => {
-          port.write('14\r\n' + percent + '\r\n', function(err, bytesWritten) {
-          });
+          if(index != portIndex) {
+            port.write('14\r\n' + percent + '\r\n', function(err, bytesWritten) {
+            });
+          }
         });
 
         return;
       }
 
-      if(data.indexOf("color:") == 0) {
+      if(portIndex == 0 && data.indexOf("color:") == 0) {
         var color = parseInt(data.split(":")[1]);
 
         ports.forEach((port, index) => {
-          port.write('15\r\n' + color + '\r\n', function(err, bytesWritten) {
-          });
+          if(index > 0) {
+            port.write('15\r\n' + color + '\r\n', function(err, bytesWritten) {
+            });
+          }
         });
 
         return;
