@@ -29,7 +29,12 @@ function isEvent(data) {
 }
 
 module.exports.init = function(serialPorts, eventFunction, audioFunction, distanceFunction) {
+  var master = "";
+
   serialPorts.forEach(function(name) {
+    if(master == "") {
+      master = name;
+    }
 
     port = new SerialPort(name, {
       parser: serialport.parsers.readline('\r\n')
@@ -65,7 +70,7 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
 
       if(data.indexOf("distance to object in cm: ") == 0) {
         var distance = parseInt(data.split(":")[1]);
-        distanceFunction(distance);
+        distanceFunction(name, distance);
         return;
       }
 

@@ -44,18 +44,14 @@ bot.startRTM(function(err,bot,payload) {
 
   serialComunication.init(settings.serialPorts, events.send, audio.event, distance.event);
   audio.bind(serialComunication);
-  distance.bind(serialComunication);
+  distance.bind(serialComunication, audio.closeEvent);
 
-  //instagram.init(serialComunication, slackBot);
-  //twitter.init(serialComunication, slackBot);
+  instagram.init(serialComunication, slackBot);
+  twitter.init(serialComunication, slackBot);
 
   setTimeout(function() {
     serialComunication.allHappy();
   }, 1000);
-
-  setTimeout(function() {
-  audio.closeEvent();
-  }, 6000);
 
   connectedToSlack = true;
 });
