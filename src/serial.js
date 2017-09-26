@@ -68,6 +68,7 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
         var percent = parseInt(data.split(":")[1]);
         ports.forEach((port, index) => {
           if(index != portIndex) {
+            console.log("hide: ", index, percent);
             port.write('14\r\n' + percent + '\r\n', function(err, bytesWritten) {
             });
           }
@@ -76,11 +77,11 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
         return;
       }
 
-      if(portIndex == 0 && data.indexOf("color:") == 0) {
+      if(data.indexOf("color:") == 0) {
         var color = parseInt(data.split(":")[1]);
 
         ports.forEach((port, index) => {
-          if(index > 0) {
+          if(index != portIndex) {
             port.write('15\r\n' + color + '\r\n', function(err, bytesWritten) {
             });
           }

@@ -1,8 +1,10 @@
 var settings = require('../settings.js');
 var triggerEvent;
+var serial;
 
-module.exports.bind = function (serial, event) {
+module.exports.bind = function (serialCommunication, event) {
     triggerEvent = event;
+    serial = serialCommunication;
 
     setInterval(function () {
         serial.readDistance();
@@ -43,5 +45,5 @@ module.exports.event = function(index, value) {
         }
     }
 
-    console.log(latest3DistanceReadings);
+    //console.log(latest3DistanceReadings);
 }
