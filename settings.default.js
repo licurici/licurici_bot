@@ -20,5 +20,7 @@
 
   distance: {
     distanceThreshold: 300
-  }
+  },
+
+  audioThreshold: 300
 };

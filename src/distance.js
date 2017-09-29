@@ -8,7 +8,7 @@ module.exports.bind = function (serialCommunication, event) {
 
     setInterval(function () {
         serial.readDistance();
-    }, 500);
+    }, 300);
 }
 
 var latest3DistanceReadings = {};

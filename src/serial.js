@@ -41,6 +41,8 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
     });
 
     port.on('data', function (data) {
+      console.log(data);
+
       if(data === "BEGIN REPORT") {
         gettingReport = true;
         reportData = "";
@@ -203,6 +205,27 @@ module.exports.setAudioThreshold = function(index, value, callback) {
       callback(null);
     });
   });
+};
+
+
+module.exports.setAudioThresholdAll = function(value, callback) {
+  setTimeout(() => {
+    ports.forEach((port) => {
+      port.write('9\r\n', function(err, bytesWritten) {
+        if (err) {
+          return callback(err);
+        }
+
+        port.write(value +'\r\n', function(err, bytesWritten) {
+          if (err) {
+            return callback(err);
+          }
+
+          callback(null);
+        });
+      });
+    });
+  }, 2000);
 };
 
 module.exports.setLightThreshold = function(index, value, callback) {

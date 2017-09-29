@@ -27,6 +27,8 @@ var slackBot = new builder.SlackBot(controller, bot, {
   minSendDelay: 100
 });
 
+var events = new Events(slackBot, settings.slackChannel);
+
 var mainDialog = new builder.CommandDialog()
   .onDefault(function (session) {
     session.beginDialog('/licurici');
@@ -35,16 +37,20 @@ var mainDialog = new builder.CommandDialog()
 slackBot.add('/', mainDialog);
 slackBot.listenForMentions();
 
+serialComunication.init(settings.serialPorts, events.send, audio.event, distance.event);
+audio.bind(serialComunication);
+distance.bind(serialComunication, audio.closeEvent);
+
+setTimeout(function() {
+  serialComunication.allHappy();
+}, 1000);
+
 bot.startRTM(function(err,bot,payload) {
   if (err) {
     throw new Error('Could not connect to Slack');
   }
 
   console.log("Connected to slack.");
-
-  serialComunication.init(settings.serialPorts, events.send, audio.event, distance.event);
-  audio.bind(serialComunication);
-  distance.bind(serialComunication, audio.closeEvent);
 
   instagram.init(serialComunication, slackBot);
   twitter.init(serialComunication, slackBot);
@@ -114,4 +120,3 @@ colors.bind(slackBot, mainDialog);
 thresholds.bind(slackBot, mainDialog);
 reports.bind(slackBot, mainDialog, serialComunication);
 
-var events = new Events(slackBot, settings.slackChannel);
