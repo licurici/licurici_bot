@@ -16,8 +16,6 @@ var twitter = require('./src/twitter');
 
 var settings = require('./settings.js');
 
-var connectedToSlack = false;
-
 var controller = Botkit.slackbot();
 var bot = controller.spawn({
    token: settings.slackToken
@@ -37,30 +35,48 @@ var mainDialog = new builder.CommandDialog()
 slackBot.add('/', mainDialog);
 slackBot.listenForMentions();
 
-serialComunication.init(settings.serialPorts, events.send, audio.event, distance.event);
-audio.bind(serialComunication);
-distance.bind(serialComunication, audio.closeEvent);
-
 setTimeout(function() {
-  serialComunication.allHappy();
-}, 1000);
-
-bot.startRTM(function(err,bot,payload) {
-  if (err) {
-    throw new Error('Could not connect to Slack');
-  }
-
-  console.log("Connected to slack.");
-
-  instagram.init(serialComunication, slackBot);
-  twitter.init(serialComunication, slackBot);
+  serialComunication.init(settings.serialPorts, events.send, audio.event, distance.event);
+  audio.bind(serialComunication);
+  distance.bind(serialComunication, audio.closeEvent);
 
   setTimeout(function() {
     serialComunication.allHappy();
   }, 1000);
+}, 1000);
 
-  connectedToSlack = true;
-});
+
+var slackTimeout;
+function connectToSlackWithTimeout() {
+  console.log("connecting to slack in 5 seconds.");
+
+  slackTimeout = setTimeout(() => {
+    console.log("connecting to slack.");
+    connectToSlack();
+  }, 5000);
+}
+
+function connectToSlack() {
+  bot.startRTM(function(err, bot, payload) {
+    if (err) {
+      console.error('Could not connect to Slack');
+      connectToSlackWithTimeout();
+
+      return;
+    }
+
+    console.log("Connected to slack.");
+
+    instagram.init(serialComunication, slackBot);
+    twitter.init(serialComunication, slackBot);
+
+    setTimeout(function() {
+      serialComunication.allHappy();
+    }, 1000);
+  });
+}
+
+connectToSlack();
 
 var actions = {
     "Alege copacul": "/tree",
