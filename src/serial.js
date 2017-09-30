@@ -70,7 +70,7 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
         var percent = parseInt(data.split(":")[1]);
         ports.forEach((port, index) => {
           if(index != portIndex) {
-            console.log("hide: ", index, percent);
+            //console.log("hide: ", index, percent);
             port.write('14\r\n' + percent + '\r\n', function(err, bytesWritten) {
             });
           }
