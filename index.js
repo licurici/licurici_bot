@@ -40,6 +40,8 @@ setTimeout(function() {
   audio.bind(serialComunication);
   distance.bind(serialComunication, audio.closeEvent);
 
+  serialComunication.setAudioThresholdAll(settings.audioThreshold);
+
   setTimeout(function() {
     serialComunication.allHappy();
   }, 1000);

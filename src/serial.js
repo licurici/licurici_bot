@@ -41,7 +41,7 @@ module.exports.init = function(serialPorts, eventFunction, audioFunction, distan
     });
 
     port.on('data', function (data) {
-      console.log(data);
+      //console.log(data);
 
       if(data === "BEGIN REPORT") {
         gettingReport = true;
